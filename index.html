@@ -19,28 +19,27 @@
   </header>
 
   <main>
-    <section class="filter-panel">
-      <button type="button" class="filter-panel-collapsible">
-        <div class="all-caps">Filter</div><i class="expander-icon fas fa-chevron-circle-up"></i>
-      </button>
-      <div class="filter-panel-collapsible-content">
-        <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()">
-          <option value="all">All Neighborhoods</option>
-        </select>
-        <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()">
-          <option value="all">All Cuisines</option>
-        </select>
-      </div>        
-    </section>
-    
-    <section class="content-container">
-      <section class="map-container">
-        <div id="map"></div>
+    <section class="map-container">
+      <div id="map"></div>
+    </section>    
+    <section class="restaurant-container">
+      <section class="filter-panel">
+        <button type="button" class="filter-panel-collapsible">
+          <div class="all-caps">Filter</div><i class="expander-icon fas fa-chevron-circle-up"></i>
+        </button>
+        <div class="filter-panel-collapsible-content">
+          <select id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()">
+            <option value="all">All Neighborhoods</option>
+          </select>
+          <select id="cuisines-select" name="cuisines" onchange="updateRestaurants()">
+            <option value="all">All Cuisines</option>
+          </select>
+        </div>
       </section>
       <section class="restaurants-list-panel">
         <ul id="restaurants-list"></ul>
       </section>
-    </section>    
+    </section>
   </main>
     
   <footer>
