@@ -3,7 +3,6 @@
 
 <head>
   <script src="https://kit.fontawesome.com/b733d3acae.js" crossorigin="anonymous"></script>
-
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Restaurant Reviews</title>
@@ -15,16 +14,11 @@
 </head>
 
 <body>
-  <header>
-    <nav>
-      <h1><a href="/" class="all-caps">Restaurant Reviews</a></h1>
-    </nav>
+  <header>    
+    <h1 class="all-caps">Restaurant Reviews</h1>
   </header>
 
   <main>
-    <section class="map-container">
-      <div id="map"></div>
-    </section>
     <section class="filter-panel">
       <button type="button" class="filter-panel-collapsible">
         <div class="all-caps">Filter</div><i class="expander-icon fas fa-chevron-circle-up"></i>
@@ -38,21 +32,27 @@
         </select>
       </div>        
     </section>
-    <section class="restaurants-list-panel">
-      <ul id="restaurants-list"></ul>
-    </section>
+    
+    <section class="content-container">
+      <section class="map-container">
+        <div id="map"></div>
+      </section>
+      <section class="restaurants-list-panel">
+        <ul id="restaurants-list"></ul>
+      </section>
+    </section>    
   </main>
-  
+    
+  <footer>
+    Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
+  </footer>
+
   <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
     integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
     crossorigin=""></script>
   <script type="application/javascript" charset="utf-8" src="js/dbhelper.js"></script>
   <script type="application/javascript" charset="utf-8" src="js/main.js"></script>
   
-
-  <footer>
-    Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
-  </footer>
 </body>
 
 </html>
