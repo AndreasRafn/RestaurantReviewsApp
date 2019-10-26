@@ -167,7 +167,6 @@ main {
   background-color: #fff;  
   font-family: Arial,sans-serif;
   margin: 0 0 10px;
-  min-height: 300px;
   padding: 0;
   text-align: left;
   width: 100%;
@@ -178,14 +177,16 @@ main {
   display: block;
   margin: 0;
   width: 100%;
+  min-height: 100px;
 }
+
 #restaurants-list li h1 {
   color: #f18200;
   font-family: Arial,sans-serif;
-  font-size: 14pt;
+  font-size: 1.2rem;
   font-weight: 200;
   letter-spacing: 0;
-  line-height: 1.3;
+  line-height: 1.3px;
   margin: 20px 0 10px;
   text-transform: uppercase;
   padding-left: 10px;
@@ -193,12 +194,12 @@ main {
 
 #restaurants-list p {
   margin: 0;
-  font-size: 11pt;
+  font-size: 0.9rem;
   padding-left: 10px;
 }
 
 #restaurants-list li a {
-  background-color: orange;
+  background-color: #ffa500;
   color: #fff;
   display: inline-block;
   font-size: 1rem;
@@ -209,6 +210,12 @@ main {
   text-transform: uppercase;
   width: 100%;
   box-sizing: border-box;
+}
+
+#restaurants-list li a:hover, #restaurants-list li a:focus {
+  background-color: #ffc04c;
+  cursor: pointer;
+  color: #664200;
 }
 
 @media screen and (min-width: 500px) {  
@@ -240,6 +247,10 @@ main {
     height: 100%;
   }
 
+  .filter-panel select {    
+    height: 36px;
+  }
+
   .restaurants-list-panel {
     overflow: auto;
   }
@@ -247,13 +258,64 @@ main {
   #restaurants-list {
     padding: 0 10px 10px;
     background-color: unset;    
+  }  
+
+  #restaurants-list li h1 {
+    font-size: 1rem;
+  }
+
+  #restaurants-list p {
+    font-size: 0.9rem;
+  }
+
+  #restaurants-list li a {
+    font-size: 0.9rem;
   }
 }
 
+@media screen and (min-width: 960px) {
+/*   #restaurants-list .restaurant-img {
+    max-height: 160px;
+    object-fit: cover;
+  } */
 
+  #restaurants-list li h1 {
+    font-size: 1.2rem;
+  }
 
+  #restaurants-list p {
+    font-size: 1rem;
+  }
 
+  #restaurants-list li a {
+    font-size: 1rem;
+  }
+}
 
+@media screen and (min-width: 500px) and (min-height: 600px) {
+  #restaurants-list .restaurant-img {
+    max-height: 100px;
+    object-fit: cover;
+  }
+}
+
+@media screen and (min-width: 500px) and (min-height: 800px) {
+  #restaurants-list .restaurant-img {
+    max-height: 120px;
+  }
+}
+
+@media screen and (min-width: 500px) and (min-height: 1000px) {
+  #restaurants-list .restaurant-img {
+    max-height: 140px;
+  }
+}
+
+@media screen and (min-width: 500px) and (min-height: 1000px) {
+  #restaurants-list .restaurant-img {
+    max-height: 160px;
+  }
+}
 
 
 
