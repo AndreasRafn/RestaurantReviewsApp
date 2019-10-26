@@ -185,9 +185,8 @@ main {
   font-family: Arial,sans-serif;
   font-size: 1.2rem;
   font-weight: 200;
-  letter-spacing: 0;
-  line-height: 1.3px;
-  margin: 20px 0 10px;
+  letter-spacing: 0;  
+  margin: 10px 0 10px;
   text-transform: uppercase;
   padding-left: 10px;
 }
@@ -274,11 +273,6 @@ main {
 }
 
 @media screen and (min-width: 960px) {
-/*   #restaurants-list .restaurant-img {
-    max-height: 160px;
-    object-fit: cover;
-  } */
-
   #restaurants-list li h1 {
     font-size: 1.2rem;
   }
