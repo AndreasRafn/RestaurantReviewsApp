@@ -62,7 +62,7 @@ class RestaurantsModel {
 
 class RestaurantsController {
     constructor() {
-        window.addEventListener("hashchange", () => this.handleUrlHashChange());
+        window.addEventListener("hashchange", (event) => this.handleUrlHashChange(event));
     }
 
     async initialize() {        
@@ -71,9 +71,19 @@ class RestaurantsController {
         filterView.render();
         restaurantsView.render();
         mapView.render();
+
+        restaurantsView.restaurantsListElement.append(RestaurantsView.createRestaurantDetailsElement(model.restaurants[0]));
     }
 
-    async applyFilter() { 
+    async applyFilter(cuisineValue = null, neighborhoodValue = null) {
+        if (cuisineValue) {
+            filterView.cuisinesSelectElement.value = cuisineValue;
+            filterView.isExpanded = true;
+        } 
+        if (neighborhoodValue) {
+            filterView.neighborhoodsSelectElement.value = neighborhoodValue;
+            filterView.isExpanded = true;
+        } 
 
         let cuisine = filterView.cuisinesSelectElement.value;
         let neighborhood = filterView.neighborhoodsSelectElement.value;
@@ -89,28 +99,39 @@ class RestaurantsController {
         mapView.render();
     }
 
+    _getUrlDetails(url) {
+        const indexOf = url.lastIndexOf("#");
+        const hasHash = indexOf > -1;
+        const hasId = hasHash && !(indexOf + 1 === url.length);
+        const id = hasId ? parseInt(url.slice(indexOf + 1)) : null;
+
+        return {
+            hasHash: hasHash,
+            hasId: hasId,
+            id: id
+        }
+    }
+
     async handleUrlHashChange() {
         const url = document.URL;
-        if(url.includes("#")) {
-            const indexOf = url.lastIndexOf("#");            
-            if(indexOf+1 === url.length) {
-                this.selectedRestaurant = null;
-                await this.applyFilter();
-                return;
-            }
+        const urlDetails = this._getUrlDetails(url);
 
-            const id = parseInt(url.slice(indexOf + 1));
-            if(id) {
-                const restaurant = model.restaurants.find(restaurant => restaurant.id === id);
-                if (restaurant) {
-                    this.selectedRestaurant = restaurant;
-                }
-                return;
+        if (urlDetails.hasId) {
+            const restaurant = model.restaurants.find(restaurant => restaurant.id === urlDetails.id);
+            if (restaurant) {
+                this.selectedRestaurant = restaurant;
             }
+            appView.scrollToTop();
+            return;
         }
 
         this.selectedRestaurant = null;
         await this.applyFilter();
+        return;
+    }
+
+    setUrl(restaurant) {        
+        window.location.href = restaurant ? restaurant.url : "/#";
     }
 
     get restaurants() {
@@ -132,6 +153,7 @@ class RestaurantsController {
     set selectedRestaurant(restaurant) {
         model.selectedRestaurant = restaurant;
         restaurantsView.render();
+        appView.render();
         mapView.render();
     }
 
@@ -144,14 +166,134 @@ class RestaurantsController {
     }
 }
 
-class RestaurantsView {
+class AppView {
     constructor() {
-        this.restaurantsList = document.querySelector("#restaurants-list");
+        this.bodyElement = document.querySelector("body");
+    }
+
+    scrollToTop() {
+        window.scrollTo(0,0);
+    }
+
+    render() {        
+        if (controller.selectedRestaurant) {            
+            this.bodyElement.classList.toggle("details", true);
+            return;
+        }
+        this.bodyElement.classList.toggle("details", false);
+    }
+}
+
+class RestaurantsView {
+    constructor() {        
+        this.restaurantsListElement = document.querySelector("#restaurants-list");
     }
     
     _clearRestaurants() {
-        this.restaurantsList.innerHTML = "";
-    }    
+        this.restaurantsListElement.innerHTML = "";
+    }
+
+    static createRestaurantDetailsElement(restaurant) {
+        const li = document.createElement("li");
+
+        const name = document.createElement("h1");
+        name.innerHTML = restaurant.name;
+        li.append(name);
+
+        const image = document.createElement("img");
+        image.className = "restaurant-img";
+        image.src = restaurant.imageUrl;      
+        li.append(image);
+
+        const cuisine = document.createElement("p");
+        cuisine.className = "cuisine-tag all-caps";        
+        cuisine.innerText = restaurant.cuisine_type;        
+        li.append(cuisine);
+
+        const neighborhoodOuter = document.createElement('p');
+        const neighborhoodInner = document.createElement("strong");
+        neighborhoodInner.innerHTML = restaurant.neighborhood;
+        neighborhoodOuter.append(neighborhoodInner);
+        li.append(neighborhoodOuter);
+
+        const address = document.createElement('p');
+        address.innerHTML = restaurant.address;
+        li.append(address);
+
+        const operatingHoursHeaderOuter = document.createElement("p");
+        operatingHoursHeaderOuter.className = "operating-hours-header"
+        const operatingHoursHeaderInner = document.createElement("strong");
+        operatingHoursHeaderInner.innerHTML = "Operating Hours";
+        operatingHoursHeaderOuter.append(operatingHoursHeaderInner);
+        li.append(operatingHoursHeaderOuter);
+
+        const operatingHoursTable = document.createElement("table");
+        operatingHoursTable.className = "restaurant-hours"
+        for (let key in restaurant.operating_hours) {
+            const row = document.createElement('tr');
+
+            const day = document.createElement('td');
+            day.innerHTML = key;
+            row.appendChild(day);
+
+            const time = document.createElement('td');
+            time.innerHTML = restaurant.operating_hours[key];
+            row.appendChild(time);
+
+            operatingHoursTable.appendChild(row);
+        }
+        li.append(operatingHoursTable);
+
+        const reviewsContainer = document.createElement("section");
+        reviewsContainer.className = "reviews-container";
+        li.append(reviewsContainer);
+
+        const reviewsHeaderOuter = document.createElement("p");
+        reviewsHeaderOuter.className = "reviews-header"
+        const reviewsHeaderInner = document.createElement("strong");
+        reviewsHeaderInner.innerHTML = "Reviews";
+        reviewsHeaderOuter.append(reviewsHeaderInner);
+        reviewsContainer.append(reviewsHeaderOuter);
+        li.append(reviewsContainer);
+
+        if (restaurant.reviews) {
+            const reviewsList = document.createElement("ul");
+            reviewsList.className = "reviews-list";
+            reviewsContainer.append(reviewsList);
+            restaurant.reviews.forEach(review => {
+                const reviewItem = document.createElement("li");
+                reviewItem.className = "review-item";
+                reviewsList.append(reviewItem);
+                
+                const reviewItemName = document.createElement("p");
+                reviewItemName.className = "review-item-name";
+                reviewItemName.innerHTML = review.name;
+                reviewItem.append(reviewItemName);
+
+                const reviewItemDate = document.createElement("p");
+                reviewItemDate.className = "review-item-date";
+                reviewItemDate.innerHTML = review.date;
+                reviewItem.append(reviewItemDate);
+
+                const reviewItemRating = document.createElement("p");
+                reviewItemRating.className = "review-item-rating";
+                reviewItemRating.innerHTML = `Rating: ${review.rating}`;
+                reviewItem.append(reviewItemRating);
+
+                const reviewItemComments = document.createElement("p");
+                reviewItemComments.className = "review-item-comments";
+                reviewItemComments.innerHTML = review.comments;
+                reviewItem.append(reviewItemComments);
+            })
+        }
+        else {
+            const reviewsMessage = document.createElement("p");
+            reviewsMessage.className = "no-reviews-message";
+            reviewsContainer.append(reviewsMessage)
+        }
+        
+        return li;
+    }
 
     static createRestaurantListElement(restaurant) {
         const li = document.createElement('li');
@@ -165,9 +307,11 @@ class RestaurantsView {
         name.innerHTML = restaurant.name;
         li.append(name);
 
-        const neighborhood = document.createElement('p');
-        neighborhood.innerHTML = restaurant.neighborhood;
-        li.append(neighborhood);
+        const neighborhoodOuter = document.createElement('p');
+        const neighborhoodInner = document.createElement("strong");
+        neighborhoodInner.innerHTML = restaurant.neighborhood;
+        neighborhoodOuter.append(neighborhoodInner);        
+        li.append(neighborhoodOuter);
 
         const address = document.createElement('p');
         address.innerHTML = restaurant.address;
@@ -184,14 +328,14 @@ class RestaurantsView {
     render() {
         this._clearRestaurants();
         if(controller.selectedRestaurant) {
-            const restaurantListElement = RestaurantsView.createRestaurantListElement(controller.selectedRestaurant);
-            this.restaurantsList.append(restaurantListElement);
+            const restaurantDetailsElement = RestaurantsView.createRestaurantDetailsElement(controller.selectedRestaurant);
+            this.restaurantsListElement.append(restaurantDetailsElement);            
             return;
         }
         if(controller.filteredRestaurants) {
             for (const restaurant of controller.filteredRestaurants) {
                 const restaurantListElement = RestaurantsView.createRestaurantListElement(restaurant);
-                this.restaurantsList.append(restaurantListElement);
+                this.restaurantsListElement.append(restaurantListElement);
             }
         }
     }
@@ -341,6 +485,7 @@ class MapView {
 
 const model = new RestaurantsModel();
 const controller = new RestaurantsController();
+const appView = new AppView();
 const filterView = new RestaurantsFilterView();
 const restaurantsView = new RestaurantsView();
 const mapView = new MapView();
