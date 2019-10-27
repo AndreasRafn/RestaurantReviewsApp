@@ -12,7 +12,7 @@ class Restaurant {
     }
 }
 
-class RestaurantsModel {    
+class RestaurantsModel {
     constructor() {
         this.restaurants = [];
         this.cuisines = new Set();
@@ -23,14 +23,14 @@ class RestaurantsModel {
         this.selectedRestaurant = null;
     }
     
-    async _update() {
+    async update(updateFiltered = true) {
         this.restaurants = await this._fetchRestaurants();
         this.cuisines = new Set(this.restaurants.map(restaurant => restaurant.cuisine_type));
         this.neighborhoods = new Set(this.restaurants.map(restaurant => restaurant.neighborhood));
+        if(updateFiltered) this.filter();  
     }
 
-    async filter() {
-        await this._update();
+    filter() {        
         this.filteredRestaurants = this.restaurants
             .filter(restaurant => !this.selectedCuisine || restaurant.cuisine_type === this.selectedCuisine)
             .filter(restaurant => !this.selectedNeighborhood || restaurant.neighborhood === this.selectedNeighborhood);
@@ -62,17 +62,19 @@ class RestaurantsModel {
 
 class RestaurantsController {
     constructor() {
+        window.addEventListener("hashchange", () => this.handleUrlHashChange());
     }
 
-    async initialize() {
-        await model.filter();
+    async initialize() {        
+        await model.update();
         
         filterView.render();
         restaurantsView.render();
         mapView.render();
     }
 
-    async applyFilter() {
+    async applyFilter() { 
+
         let cuisine = filterView.cuisinesSelectElement.value;
         let neighborhood = filterView.neighborhoodsSelectElement.value;
 
@@ -81,11 +83,35 @@ class RestaurantsController {
 
         model.selectedCuisine = cuisine;
         model.selectedNeighborhood = neighborhood;        
-        await model.filter();
+        await model.update();
 
         restaurantsView.render();
         mapView.render();
-    }   
+    }
+
+    async handleUrlHashChange() {
+        const url = document.URL;
+        if(url.includes("#")) {
+            const indexOf = url.lastIndexOf("#");            
+            if(indexOf+1 === url.length) {
+                this.selectedRestaurant = null;
+                await this.applyFilter();
+                return;
+            }
+
+            const id = parseInt(url.slice(indexOf + 1));
+            if(id) {
+                const restaurant = model.restaurants.find(restaurant => restaurant.id === id);
+                if (restaurant) {
+                    this.selectedRestaurant = restaurant;
+                }
+                return;
+            }
+        }
+
+        this.selectedRestaurant = null;
+        await this.applyFilter();
+    }
 
     get restaurants() {
         return model.restaurants;
@@ -101,6 +127,12 @@ class RestaurantsController {
 
     get selectedRestaurant() {
         return model.selectedRestaurant;
+    }
+
+    set selectedRestaurant(restaurant) {
+        model.selectedRestaurant = restaurant;
+        restaurantsView.render();
+        mapView.render();
     }
 
     get filteredRestaurants() {
@@ -167,8 +199,14 @@ class RestaurantsView {
 
 class RestaurantsFilterView {
     constructor() {
+        this.filterPanelElement= document.querySelector("#filter-panel");
+        this.filterPanelCollapsibleElement = document.querySelector("#filter-panel-collapsible");
+        this.filterPanelContentElement = document.querySelector("#filter-panel-collapsible-content");
+        this.filterPanelCollapsibleIconElement = document.querySelector("#expander-icon");
         this.cuisinesSelectElement = document.querySelector("#cuisines-select");
         this.neighborhoodsSelectElement = document.querySelector("#neighborhoods-select");
+
+        this.filterPanelCollapsibleElement.addEventListener("click", () => this.toggleExpansionState());
 
         this.cuisinesSelectElement.addEventListener("change", function() {
             controller.applyFilter();
@@ -177,6 +215,31 @@ class RestaurantsFilterView {
         this.neighborhoodsSelectElement.addEventListener("change", function() {
             controller.applyFilter();
         });      
+    }
+
+    get isExpanded() {
+        return this.filterPanelCollapsibleElement.classList.contains("expanded");
+    }
+
+    set isExpanded(isExpanded) {
+        if(isExpanded) {
+            this.filterPanelCollapsibleElement.classList.add("expanded");
+            this.filterPanelCollapsibleIconElement.classList.add("fa-chevron-circle-down");
+            this.filterPanelCollapsibleIconElement.classList.remove("fa-chevron-circle-up");
+            this.filterPanelContentElement.classList.remove("hidden");
+            this.filterPanelContentElement.classList.add("expanded");
+        }   
+        else{
+            this.filterPanelCollapsibleElement.classList.remove("expanded");
+            this.filterPanelCollapsibleIconElement.classList.add("fa-chevron-circle-up");
+            this.filterPanelCollapsibleIconElement.classList.remove("fa-chevron-circle-down");
+            this.filterPanelContentElement.classList.add("hidden");
+            this.filterPanelContentElement.classList.remove("expanded");
+        }        
+    }
+
+    toggleExpansionState() {
+        this.isExpanded = !this.isExpanded;
     }
 
     render() {
@@ -243,12 +306,12 @@ class MapView {
     }
 
     _center() {
-        if(controller.selectedRestaurant) {            
-            this.map.panTo(controller.selectedRestaurant.latlng);
+        if(controller.selectedRestaurant) {
+            this.map.setView(controller.selectedRestaurant.latlng, 16);
             return;
         }
         if(controller.filteredRestaurants) {
-            this.map.panTo(controller.centerCoordinatesOfFiltered);
+            this.map.setView(controller.centerCoordinatesOfFiltered, 12);
         }
     }
 
@@ -263,7 +326,7 @@ class MapView {
     render() {
         this._clearMarkers();
         if(controller.selectedRestaurant) { 
-            this._addMarker(controller.selectedRestaurant);                
+            this._addMarker(controller.selectedRestaurant);
             this._center();
             return;
         }
