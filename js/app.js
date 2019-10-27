@@ -71,8 +71,6 @@ class RestaurantsController {
         filterView.render();
         restaurantsView.render();
         mapView.render();
-
-        restaurantsView.restaurantsListElement.append(RestaurantsView.createRestaurantDetailsElement(model.restaurants[0]));
     }
 
     async applyFilter(cuisineValue = null, neighborhoodValue = null) {
