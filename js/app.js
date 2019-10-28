@@ -200,7 +200,15 @@ class RestaurantsView {
 
         const image = document.createElement("img");
         image.className = "restaurant-img";
-        image.src = restaurant.imageUrl;      
+        image.src = restaurant.imageUrl;        
+        image.srcset = `img/${restaurant.id}_800px.jpg 800w, 
+                        img/${restaurant.id}_640px.jpg 640w, 
+                        img/${restaurant.id}_480px.jpg 480w, 
+                        img/${restaurant.id}_320px.jpg 320w`;
+        image.sizes = `(max-width: 500px) 50vw, 
+                       (max-width: 1200px) 50vw,
+                       100vw`;
+        image.alt = restaurant.name;
         li.append(image);
 
         const cuisine = document.createElement("p");
@@ -299,6 +307,14 @@ class RestaurantsView {
         const image = document.createElement('img');
         image.className = 'restaurant-img';
         image.src = restaurant.imageUrl;
+        image.srcset = `img/${restaurant.id}_800px.jpg 800w, 
+                        img/${restaurant.id}_640px.jpg 640w, 
+                        img/${restaurant.id}_480px.jpg 480w, 
+                        img/${restaurant.id}_320px.jpg 320w`;
+        image.sizes = `(max-width: 500px) 33vw, 
+                       (max-width: 1200px) 33vw,
+                       100vw`;
+        image.alt = restaurant.name;
         li.append(image);
 
         const name = document.createElement('h1');
