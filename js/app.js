@@ -182,189 +182,267 @@ class AppView {
     }
 }
 
-class RestaurantsView {
-    constructor() {        
-        this.restaurantsListElement = document.querySelector("#restaurants-list");
+class RestaurantsListPanelView {
+    constructor(listPanelElement) {
+        this.panelElement = listPanelElement;
+        this.listElement = listPanelElement.querySelector(".restaurant-list");
     }
     
-    _clearRestaurants() {
-        this.restaurantsListElement.innerHTML = "";
-    }
-
-    static createRestaurantDetailsElement(restaurant) {
-        const li = document.createElement("li");
-
-        const name = document.createElement("h1");
-        name.innerHTML = restaurant.name;
-        li.append(name);
-
-        const image = document.createElement("img");
-        image.className = "restaurant-img";
-        image.src = restaurant.imageUrl;        
-        image.srcset = `img/${restaurant.id}_800px.jpg 800w, 
-                        img/${restaurant.id}_640px.jpg 640w, 
-                        img/${restaurant.id}_480px.jpg 480w, 
-                        img/${restaurant.id}_320px.jpg 320w`;
-        image.sizes = `(max-width: 500px) 50vw, 
-                       (max-width: 1200px) 50vw,
-                       100vw`;
-        image.alt = restaurant.name;
-        li.append(image);
-
-        const cuisine = document.createElement("p");
-        cuisine.className = "cuisine-tag all-caps";        
-        cuisine.innerText = restaurant.cuisine_type;        
-        li.append(cuisine);
-
-        const neighborhoodOuter = document.createElement('p');
-        const neighborhoodInner = document.createElement("strong");
-        neighborhoodInner.innerHTML = restaurant.neighborhood;
-        neighborhoodOuter.append(neighborhoodInner);
-        li.append(neighborhoodOuter);
-
-        const address = document.createElement('p');
-        address.innerHTML = restaurant.address;
-        li.append(address);
-
-        const operatingHoursHeaderOuter = document.createElement("p");
-        operatingHoursHeaderOuter.className = "operating-hours-header"
-        const operatingHoursHeaderInner = document.createElement("strong");
-        operatingHoursHeaderInner.innerHTML = "Operating Hours";
-        operatingHoursHeaderOuter.append(operatingHoursHeaderInner);
-        li.append(operatingHoursHeaderOuter);
-
-        const operatingHoursTable = document.createElement("table");
-        operatingHoursTable.className = "restaurant-hours"
-        for (let key in restaurant.operating_hours) {
-            const row = document.createElement('tr');
-
-            const day = document.createElement('td');
-            day.innerHTML = key;
-            row.appendChild(day);
-
-            const time = document.createElement('td');
-            time.innerHTML = restaurant.operating_hours[key];
-            row.appendChild(time);
-
-            operatingHoursTable.appendChild(row);
-        }
-        li.append(operatingHoursTable);
-
-        const reviewsContainer = document.createElement("section");
-        reviewsContainer.className = "reviews-container";
-        li.append(reviewsContainer);
-
-        const reviewsHeaderOuter = document.createElement("p");
-        reviewsHeaderOuter.className = "reviews-header"
-        const reviewsHeaderInner = document.createElement("strong");
-        reviewsHeaderInner.innerHTML = "Reviews";
-        reviewsHeaderOuter.append(reviewsHeaderInner);
-        reviewsContainer.append(reviewsHeaderOuter);
-        li.append(reviewsContainer);
-
-        if (restaurant.reviews) {
-            const reviewsList = document.createElement("ul");
-            reviewsList.className = "reviews-list";
-            reviewsContainer.append(reviewsList);
-            restaurant.reviews.forEach(review => {
-                const reviewItem = document.createElement("li");
-                reviewItem.className = "review-item";
-                reviewsList.append(reviewItem);
-                
-                const reviewItemName = document.createElement("p");
-                reviewItemName.className = "review-item-name";
-                reviewItemName.innerHTML = review.name;
-                reviewItem.append(reviewItemName);
-
-                const reviewItemDate = document.createElement("p");
-                reviewItemDate.className = "review-item-date";
-                reviewItemDate.innerHTML = review.date;
-                reviewItem.append(reviewItemDate);
-
-                const reviewItemRating = document.createElement("p");
-                reviewItemRating.className = "review-item-rating";
-                reviewItemRating.innerHTML = `Rating: ${review.rating}`;
-                reviewItem.append(reviewItemRating);
-
-                const reviewItemComments = document.createElement("p");
-                reviewItemComments.className = "review-item-comments";
-                reviewItemComments.innerHTML = review.comments;
-                reviewItem.append(reviewItemComments);
-            })
-        }
-        else {
-            const reviewsMessage = document.createElement("p");
-            reviewsMessage.className = "no-reviews-message";
-            reviewsContainer.append(reviewsMessage)
-        }
-        
-        return li;
-    }
-
-    static createRestaurantListElement(restaurant) {
-        const li = document.createElement('li');
-
-        const image = document.createElement('img');
-        image.className = 'restaurant-img';
-        image.src = restaurant.imageUrl;
-        image.srcset = `img/${restaurant.id}_800px.jpg 800w, 
-                        img/${restaurant.id}_640px.jpg 640w, 
-                        img/${restaurant.id}_480px.jpg 480w, 
-                        img/${restaurant.id}_320px.jpg 320w`;
-        image.sizes = `(max-width: 500px) 33vw, 
-                       (max-width: 1200px) 33vw,
-                       100vw`;
-        image.alt = restaurant.name;
-        li.append(image);
-
-        const name = document.createElement('h1');
-        name.innerHTML = restaurant.name;
-        li.append(name);
-
-        const neighborhoodOuter = document.createElement('p');
-        const neighborhoodInner = document.createElement("strong");
-        neighborhoodInner.innerHTML = restaurant.neighborhood;
-        neighborhoodOuter.append(neighborhoodInner);        
-        li.append(neighborhoodOuter);
-
-        const address = document.createElement('p');
-        address.innerHTML = restaurant.address;
-        li.append(address);
-
-        const more = document.createElement('a');
-        more.innerHTML = 'View Details';
-        more.href = restaurant.url;
-        li.append(more)
-
-        return li
+    clearList() {
+        this.listElement.innerHTML = "";
     }
 
     render() {
-        this._clearRestaurants();
-        if(controller.selectedRestaurant) {
-            const restaurantDetailsElement = RestaurantsView.createRestaurantDetailsElement(controller.selectedRestaurant);
-            this.restaurantsListElement.append(restaurantDetailsElement);            
+        this.clearList();
+        if (controller.selectedRestaurant) {
+            const listItemDetailsElement = RestaurantsListPanelView.createListItemDetailsElement(controller.selectedRestaurant);
+            this.listElement.append(listItemDetailsElement);
+            const header = listItemDetailsElement.querySelector("h2");
+            if (header) header.focus();
             return;
         }
-        if(controller.filteredRestaurants) {
+        if (controller.filteredRestaurants) {
             for (const restaurant of controller.filteredRestaurants) {
-                const restaurantListElement = RestaurantsView.createRestaurantListElement(restaurant);
-                this.restaurantsListElement.append(restaurantListElement);
+                const listItemElement = RestaurantsListPanelView.createListItemElement(restaurant);
+                this.listElement.append(listItemElement);
+            }
+            const header = this.listElement.firstChild.querySelector("h2");
+            if(header) header.focus();
+            return;
+        }
+        //message
+    }
+
+    static createListItemImageElement(restaurant, sidePanelWidth) {
+        const imageElement = document.createElement('img');
+        imageElement.className = "restaurant-list-item-image";
+        imageElement.src = restaurant.imageUrl;
+        imageElement.srcset = `img/${restaurant.id}_800px.jpg 800w, 
+                               img/${restaurant.id}_640px.jpg 640w, 
+                               img/${restaurant.id}_480px.jpg 480w, 
+                               img/${restaurant.id}_320px.jpg 320w`;
+        imageElement.sizes = `(max-width: 500px) ${sidePanelWidth},
+                              (max-width: 1200px) ${sidePanelWidth},
+                              (max-width: 1600px) ${sidePanelWidth},
+                               100vw`;
+        imageElement.alt = `Photo of the restaurant ${restaurant.name}`;
+        return imageElement;
+    }
+
+    static createListItemAddressSectionElement(restaurant, {isHeaderVisible = true, isNeighborhoodBold = false} = {}) {
+        const addressSectionElement = document.createElement("section");
+        addressSectionElement.className = "restaurant-list-item-address-section";
+        
+        const addressSectionHeaderElement = document.createElement("h3");
+        if (typeof isHeaderVisible !== 'undefined' && !isHeaderVisible) addressSectionHeaderElement.className = "screenreader";
+        addressSectionHeaderElement.innerHTML = "Address";
+        addressSectionElement.append(addressSectionHeaderElement);
+
+        const neighborhoodElement = document.createElement('p');
+        neighborhoodElement.innerHTML = isNeighborhoodBold ? `<strong>${restaurant.neighborhood}</strong>` : restaurant.neighborhood;
+        addressSectionElement.append(neighborhoodElement);
+
+        const addressElement = document.createElement('p');
+        addressElement.innerHTML = restaurant.address;
+        addressSectionElement.append(addressElement);
+        
+        return addressSectionElement;
+    }
+
+    static createListItemTitleElement(restaurant) {
+        const titleElement = document.createElement('h2');
+        titleElement.innerHTML = restaurant.name;
+        titleElement.className = "text-accent";
+        return titleElement;
+    }
+
+    static createListItemViewDetailsElement(restaurant) {
+        const viewDetailsElement = document.createElement('a');
+        viewDetailsElement.innerHTML = 'View Details';
+        viewDetailsElement.className = "restaurant-list-item-button panel-button-accent";
+        viewDetailsElement.setAttribute("aria-label", `view details for the restaurant: ${restaurant.name}`)
+        viewDetailsElement.href = restaurant.url;
+        return viewDetailsElement;
+    }
+
+    static createListItemCuisineTagElement(restaurant) {
+        const cuisineTagElement = document.createElement("p");
+        cuisineTagElement.className = "restaurant-list-item-tag text-all-caps";
+        cuisineTagElement.setAttribute("role","img");
+        cuisineTagElement.setAttribute("aria-label", `cuisine: ${restaurant.cuisine_type}`);
+        cuisineTagElement.innerHTML = restaurant.cuisine_type;
+        return cuisineTagElement;
+    }
+
+    static createListItemOperatingHoursSectionElement(restaurant) {
+        const operatingHoursSectionElement = document.createElement("section");
+        operatingHoursSectionElement.className = "restaurant-list-item-operating-hours-section";
+        
+        const operatingHoursSectionHeaderElement = document.createElement("h3");
+        operatingHoursSectionHeaderElement.innerHTML = "Operating Hours";
+        operatingHoursSectionElement.append(operatingHoursSectionHeaderElement);
+
+        const operatingHoursTableElement = document.createElement("table");
+        operatingHoursTableElement.className = "restaurant-list-item-operating-hours-table"
+        
+        for (let day in restaurant.operating_hours) {
+            const rowElement = document.createElement('tr');
+
+            const dayElement = document.createElement('td');
+            dayElement.innerHTML = day;
+            rowElement.appendChild(dayElement);
+            
+            const hoursElement = document.createElement('td');
+            hoursElement.innerHTML = restaurant.operating_hours[day];
+            rowElement.appendChild(hoursElement);
+
+            operatingHoursTableElement.appendChild(rowElement);
+        }
+        operatingHoursSectionElement.append(operatingHoursTableElement);
+
+        return operatingHoursSectionElement;
+    }
+
+    static createListItemReviewsSectionElement(restaurant) {
+        const reviewsSectionElement = document.createElement("section");
+        reviewsSectionElement.className = "restaurant-list-item-reviews-section";
+        
+        const reviewsSectionHeaderElement = document.createElement("h3");
+        reviewsSectionHeaderElement.innerHTML = "Reviews";
+        reviewsSectionElement.append(reviewsSectionHeaderElement);
+
+        if (restaurant.reviews) {
+            const reviewListElement = document.createElement("ul");
+            reviewListElement.className = "restaurant-list-item-review-list";
+            reviewsSectionElement.append(reviewListElement);
+
+            for (const review of restaurant.reviews) {
+                const reviewElement = RestaurantsListPanelView.createListItemReviewElement(review);
+                reviewListElement.append(reviewElement);
             }
         }
+        else {
+            //message
+        }
+
+        return reviewsSectionElement;
+    }
+
+    static createListItemReviewRatingElement(rating) {
+        const reviewRatingElement = document.createElement("span");
+        reviewRatingElement.className = "star-rating-span";
+        reviewRatingElement.setAttribute("role","img");
+        reviewRatingElement.setAttribute("aria-label", `Rating: ${rating} out of 5 stars`);
+        
+        for (let starIndex = 1; starIndex <= 5; starIndex++) {
+            let starElement = document.createElement("i");
+            starElement.className = `${(starIndex <= rating ? "fas" : "far")} fa-star`;
+            reviewRatingElement.append(starElement);
+        }
+
+        return reviewRatingElement;
+    }
+
+    static createListItemReviewElement(review) {
+        const reviewElement = document.createElement("li");
+        reviewElement.className = "restaurant-list-item-review";        
+
+        const reviewHeaderElement = document.createElement("p");
+        reviewHeaderElement.className = "restaurant-list-item-review-header";
+        reviewElement.append(reviewHeaderElement);
+
+        const reviewPosterNameElement = document.createElement("span");
+        reviewPosterNameElement.className = "restaurant-list-item-review-poster-name";
+        reviewPosterNameElement.innerHTML = review.name;
+        reviewHeaderElement.append(reviewPosterNameElement);
+
+        const reviewDateElement = document.createElement("span");
+        reviewDateElement.className = "restaurant-list-item-review-date";
+        reviewDateElement.innerHTML = ` on ${review.date}`;
+        reviewHeaderElement.append(reviewDateElement);
+
+        const rating = parseInt(review.rating);
+        const reviewRatingElement = RestaurantsListPanelView.createListItemReviewRatingElement(rating);
+        reviewHeaderElement.append(reviewRatingElement);
+
+        const reviewCommentsElement = document.createElement("p");
+        reviewCommentsElement.className = "restaurant-list-item-review-comments";
+        reviewCommentsElement.innerHTML = review.comments;
+        reviewElement.append(reviewCommentsElement);
+
+        return reviewElement;
+    }
+
+    static createListItemElement(restaurant) {
+        const itemElement = document.createElement('li');
+        itemElement.className = "restaurant-list-item";
+
+        const imageElement = RestaurantsListPanelView.createListItemImageElement(restaurant, "33vw");
+        itemElement.append(imageElement);
+
+        const infoPanelElement = document.createElement("section");
+        infoPanelElement.className = "restaurant-list-item-info-panel";
+
+        const titleElement = RestaurantsListPanelView.createListItemTitleElement(restaurant);
+        infoPanelElement.append(titleElement);
+
+        const addressSectionElement = RestaurantsListPanelView.createListItemAddressSectionElement(
+            restaurant, {isHeaderVisible: false, isNeighborhoodBold: true});
+        infoPanelElement.append(addressSectionElement);
+
+        itemElement.append(infoPanelElement);
+
+        const viewDetailsElement = RestaurantsListPanelView.createListItemViewDetailsElement(restaurant);
+        itemElement.append(viewDetailsElement);        
+
+        return itemElement;
+    }
+
+    static createListItemDetailsElement(restaurant) {
+        const itemElement = document.createElement('li');
+        itemElement.className = "restaurant-list-item";
+
+        const titleElement = RestaurantsListPanelView.createListItemTitleElement(restaurant);
+        titleElement.classList.add("text-center");
+        itemElement.append(titleElement);
+
+        const imageElement = RestaurantsListPanelView.createListItemImageElement(restaurant, "50vw");
+        itemElement.append(imageElement);
+
+        const cuisineTagElement = RestaurantsListPanelView.createListItemCuisineTagElement(restaurant);
+        itemElement.append(cuisineTagElement);
+
+        const infoPanelElement = document.createElement("section");
+        infoPanelElement.className = "restaurant-list-item-info-panel";        
+
+        const addressSectionElement = RestaurantsListPanelView.createListItemAddressSectionElement(
+            restaurant, { isHeaderVisible: true, isNeighborhoodBold: false });
+        infoPanelElement.append(addressSectionElement);
+
+        const operatingHoursSectionElement = RestaurantsListPanelView.createListItemOperatingHoursSectionElement(restaurant);
+        infoPanelElement.append(operatingHoursSectionElement);       
+
+        itemElement.append(infoPanelElement);
+
+        const reviewsSectionElement = RestaurantsListPanelView.createListItemReviewsSectionElement(restaurant);
+        itemElement.append(reviewsSectionElement);
+
+        return itemElement;
     }
 }
 
-class RestaurantsFilterView {
-    constructor() {
-        this.filterPanelElement= document.querySelector("#filter-panel");
-        this.filterPanelCollapsibleElement = document.querySelector("#filter-panel-collapsible");
-        this.filterPanelContentElement = document.querySelector("#filter-panel-collapsible-content");
-        this.filterPanelCollapsibleIconElement = document.querySelector("#expander-icon");
+class RestaurantsFilterPanelView {
+    constructor(filterPanelElement) {
+
+        this.panelElement = filterPanelElement;
+        this.expanderButtonElement = filterPanelElement.querySelector(".filter-panel-expander-button");
+        this.expanderIconElement = filterPanelElement.querySelector(".filter-panel-expander-icon");
+        this.expanderContentElement = filterPanelElement.querySelector(".filter-panel-expander-content");
+        
         this.cuisinesSelectElement = document.querySelector("#cuisines-select");
         this.neighborhoodsSelectElement = document.querySelector("#neighborhoods-select");
 
-        this.filterPanelCollapsibleElement.addEventListener("click", () => this.toggleExpansionState());
+        this.expanderButtonElement.addEventListener("click", () => this.toggleExpansionState());
 
         this.cuisinesSelectElement.addEventListener("change", function() {
             controller.applyFilter();
@@ -376,24 +454,26 @@ class RestaurantsFilterView {
     }
 
     get isExpanded() {
-        return this.filterPanelCollapsibleElement.classList.contains("expanded");
+        return this.expanderButtonElement.getAttribute("aria-expanded") === "true";
     }
 
     set isExpanded(isExpanded) {
         if(isExpanded) {
-            this.filterPanelCollapsibleElement.classList.add("expanded");
-            this.filterPanelCollapsibleIconElement.classList.add("fa-chevron-circle-down");
-            this.filterPanelCollapsibleIconElement.classList.remove("fa-chevron-circle-up");
-            this.filterPanelContentElement.classList.remove("hidden");
-            this.filterPanelContentElement.classList.add("expanded");
+            this.expanderButtonElement.setAttribute("aria-expanded","true");
+            this.expanderButtonElement.setAttribute("aria-label", "filter panel, click to collapse");
+            this.expanderIconElement.classList.add("fa-chevron-circle-down");
+            this.expanderIconElement.classList.remove("fa-chevron-circle-up");
+            this.expanderContentElement.classList.remove("hidden");
+            this.expanderContentElement.classList.add("expanded");
         }   
         else{
-            this.filterPanelCollapsibleElement.classList.remove("expanded");
-            this.filterPanelCollapsibleIconElement.classList.add("fa-chevron-circle-up");
-            this.filterPanelCollapsibleIconElement.classList.remove("fa-chevron-circle-down");
-            this.filterPanelContentElement.classList.add("hidden");
-            this.filterPanelContentElement.classList.remove("expanded");
-        }        
+            this.expanderButtonElement.setAttribute("aria-expanded", "false");
+            this.expanderButtonElement.setAttribute("aria-label", "filter panel, click to expand");
+            this.expanderIconElement.classList.add("fa-chevron-circle-up");
+            this.expanderIconElement.classList.remove("fa-chevron-circle-down");
+            this.expanderContentElement.classList.add("hidden");
+            this.expanderContentElement.classList.remove("expanded");
+        }
     }
 
     toggleExpansionState() {
@@ -439,11 +519,12 @@ class RestaurantsFilterView {
 }
 
 class MapView {
-    constructor() {
+    constructor() {        
         this.map = L.map('map', {
             center: [40.722216, -73.987501],
             zoom: 12,
-            scrollWheelZoom: false
+            scrollWheelZoom: true,
+            keyboard: false
           });
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
             mapboxToken: 'pk.eyJ1IjoiYW5kcmVhc3JhZm4iLCJhIjoiY2syM2pzaDh3MG5leDNibXpoZ29taHJwdyJ9.C4ToektHZj4A-0SSJTTVcQ',
@@ -452,8 +533,10 @@ class MapView {
                 '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
                 'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
             id: 'mapbox.streets'
-        }).addTo(this.map);   
+        }).addTo(this.map);        
         this.markers = [];
+        this.mapElement = document.querySelector("#map");
+        /* this.mapElement.setAttribute("aria-hidden","true"); */
     }
 
     _clearMarkers() {
@@ -500,8 +583,8 @@ class MapView {
 const model = new RestaurantsModel();
 const controller = new RestaurantsController();
 const appView = new AppView();
-const filterView = new RestaurantsFilterView();
-const restaurantsView = new RestaurantsView();
+const filterView = new RestaurantsFilterPanelView(document.querySelector(".filter-panel"));
+const restaurantsView = new RestaurantsListPanelView(document.querySelector(".restaurant-list-panel"));
 const mapView = new MapView();
 
 controller.initialize();
