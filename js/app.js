@@ -1,3 +1,10 @@
+/* app.js
+ * 
+ * This file provides classes representing the site's data and views, as well as a
+ * controller managing these to ensure separation of concerns. Code follows the MVC
+ * architecture pattern.
+ */
+
 class Restaurant {
     constructor(json) {
         Object.assign(this, json);
@@ -185,23 +192,40 @@ class AppView {
 class RestaurantsListPanelView {
     constructor(listPanelElement) {
         this.panelElement = listPanelElement;
-        this.listElement = listPanelElement.querySelector(".restaurant-list");
     }
     
     clearList() {
-        this.listElement.innerHTML = "";
+        this.panelElement.innerHTML = "";
+    }
+
+    clearPanel() {
+        this.panelElement.innerHTML = "";
+    }
+
+    addList() {
+        if(!this.hasList) {
+            this.clearPanel();            
+            this.listElement = RestaurantsListPanelView.createListElement();
+            this.panelElement.append(this.listElement);
+        }
+    }
+
+    get hasList() {
+        return Boolean(this.panelElement.querySelector("ul.restaurant-list"));
     }
 
     render() {
-        this.clearList();
-        if (controller.selectedRestaurant) {
+        this.clearPanel();
+        if (controller.selectedRestaurant) {            
+            this.addList();
             const listItemDetailsElement = RestaurantsListPanelView.createListItemDetailsElement(controller.selectedRestaurant);
             this.listElement.append(listItemDetailsElement);
             const header = listItemDetailsElement.querySelector("h2");
             if (header) header.focus();
             return;
         }
-        if (controller.filteredRestaurants) {
+        if (controller.filteredRestaurants && controller.filteredRestaurants.length) {
+            this.addList();
             for (const restaurant of controller.filteredRestaurants) {
                 const listItemElement = RestaurantsListPanelView.createListItemElement(restaurant);
                 this.listElement.append(listItemElement);
@@ -210,7 +234,21 @@ class RestaurantsListPanelView {
             if(header) header.focus();
             return;
         }
-        //message
+        const messageElement = RestaurantsListPanelView.createMessageElement("No Matches")
+        this.panelElement.append(messageElement);
+    }
+
+    static createListElement() {
+        const listElement = document.createElement("ul");
+        listElement.className = "restaurant-list";
+        return listElement;
+    }
+
+    static createMessageElement(message) {
+        const messageElement = document.createElement("p");
+        messageElement.className = "restaurant-list-panel-message";
+        messageElement.innerHTML = message;
+        return messageElement;
     }
 
     static createListItemImageElement(restaurant, sidePanelWidth) {
@@ -311,7 +349,7 @@ class RestaurantsListPanelView {
         reviewsSectionHeaderElement.innerHTML = "Reviews";
         reviewsSectionElement.append(reviewsSectionHeaderElement);
 
-        if (restaurant.reviews) {
+        if (restaurant.reviews && restaurant.reviews.length) {
             const reviewListElement = document.createElement("ul");
             reviewListElement.className = "restaurant-list-item-review-list";
             reviewsSectionElement.append(reviewListElement);
@@ -322,7 +360,8 @@ class RestaurantsListPanelView {
             }
         }
         else {
-            //message
+            const messageElement = RestaurantsListPanelView.createMessageElement("No Reviews Yet");
+            reviewsSectionElement.append(messageElement);
         }
 
         return reviewsSectionElement;
@@ -519,7 +558,7 @@ class RestaurantsFilterPanelView {
 }
 
 class MapView {
-    constructor() {        
+    constructor() {
         this.map = L.map('map', {
             center: [40.722216, -73.987501],
             zoom: 12,
@@ -536,7 +575,6 @@ class MapView {
         }).addTo(this.map);        
         this.markers = [];
         this.mapElement = document.querySelector("#map");
-        /* this.mapElement.setAttribute("aria-hidden","true"); */
     }
 
     _clearMarkers() {
@@ -578,6 +616,19 @@ class MapView {
         }
         this._center();
     }
+}
+
+/** register service worker */
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js').then(function (registration) {
+            // Registration was successful
+            console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function (err) {
+            // registration failed :(
+            console.log('ServiceWorker registration failed: ', err.message);
+        });
+    });
 }
 
 const model = new RestaurantsModel();
