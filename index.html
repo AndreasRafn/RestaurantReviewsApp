@@ -20,12 +20,14 @@
   </header>    
   <main>
     <section class="restaurant-info-panel">
+      <!-- use simple and multi device compatible back design rather than breadcrumb, navigation only enabled when in item details view -->
       <nav>
         <a class="navigation/back/button panel-button" href="\#">
           <i class="fas fa-chevron-circle-left text-pad-right"></i>Back To Results
         </a>
       </nav>
       <section class="filter-panel">
+        <!-- use switch role ensure sreenreader users understand that filter options can be reached on expansion -->
         <button class="filter-panel-expander-button panel-button" role="switch" aria-expanded="false" aria-label="filter panel, click to expand">
           <i class="fas fa-chevron-circle-up text-pad-right filter-panel-expander-icon"></i>Filter
         </button>
@@ -41,7 +43,6 @@
         </div>
       </section>
       <section class="restaurant-list-panel">
-        <ul class="restaurant-list"></ul>
       </section>
     </section>
     <!--hide map from screenreaders to to avoid duplication of restaurant information-->

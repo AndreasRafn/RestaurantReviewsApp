@@ -102,7 +102,7 @@ select:focus {
 }
 
 .text-accent {
-  color: #f18200; /* darker shade of orange readable on light background */
+  color: #f18200; 
 }
 
 .panel-button {
@@ -143,6 +143,7 @@ select:focus {
   background-color: #669cff;
 }
 
+/* hide content visually but keep available for screen readers */
 .screenreader {
   position: absolute;
   top: -9999px;
@@ -180,7 +181,7 @@ header {
 }
 
 #header-title {
-  padding-left: 10px; /* cater for trailing letter spacing to ensure proper centering */
+  padding-left: 10px; /* ensure centering on mobile */
   font-weight: normal;
   margin: 0;
 }
@@ -229,7 +230,8 @@ nav {
   width: 100%;
   top: 0;
   left: 0;
-  position: sticky;
+  position: sticky; /* the nav stick to the top when scrolling down making it easy to go back
+    to results (without a device back button) in the case of many reviews and other content */
   box-sizing: border-box;
 }
 
@@ -400,6 +402,14 @@ ul.restaurant-list-item-review-list {
   font-style: italic;
 }
 
+.restaurant-list-panel-message {
+  width: 100%;
+  text-align: center;
+  padding: 1em;
+  font-size: 1.2em;
+  color: #66686e;
+  box-sizing: border-box;
+}
 
 /* #endregion restaurants-list-panel */
 
@@ -409,7 +419,7 @@ ul.restaurant-list-item-review-list {
 
 .map-container {
   order: 1;
-  min-height: 280px;
+  min-height: 240px;
   width: 100%;
 }
 
@@ -424,7 +434,8 @@ ul.restaurant-list-item-review-list {
 
 /* #region media queries*/
 
-@media screen and (min-width: 500px /* tablet and above */) {
+/* for larger screens like tablets and desktops shift layout to side menu and large map */
+@media screen and (min-width: 500px) {
   #header-title {
     text-align: left;
   }
@@ -441,6 +452,12 @@ ul.restaurant-list-item-review-list {
     min-width: 200px;
     max-width: 400px;
     background-color: #303440;
+  }
+
+  .map-container {
+    order: 2; /* place after (right of) restaurant list container horizontally */
+    height: 100%;
+    flex: 1; /* fill remaining space to provide a app-like tablet or desktop experience */
   }
 
   .details .restaurant-info-panel {
@@ -470,20 +487,22 @@ ul.restaurant-list-item-review-list {
     font-size: 1.4em;
   }
 
-  .map-container {
-    order: 2;
-    height: 100%;
-    flex: 1;
+  .restaurant-list-panel-message {
+    color: #c1c2c5;
+  }
+
+  .details .restaurant-list-panel-message {
+    color: #66686e;
   }
 }
 
 @media screen and (min-width: 1200px) {
   body {
-    font-size: 1.1em;
+    font-size: 1.1em; /* slight relative font-size increase across all elements */
   }
   
   .filter-panel select {
-    height: 36px; /* better for non-touch, desktop */
+    height: 36px; /* better for desktop */
   }
 
   .details .restaurant-list li.restaurant-list-item h2 {    
@@ -493,31 +512,49 @@ ul.restaurant-list-item-review-list {
 
 @media screen and (min-width: 1600px) {
   body {
-    font-size: 1.2em;
+    font-size: 1.2em; /* slight relative font-size increase across all elements */
   }
 }
 
+@media screen and (min-height: 600px) {
+  .map-container {
+    min-height: 280px; /* adjust map height for large height narrow viewport (non-tablet) mobile devices */
+  }
+}
+
+@media screen and (min-height: 600px) {
+  .map-container {
+    min-height: 300px; /* adjust map height for large height narrow viewport (non-tablet) mobile devices */
+  }
+}
+
+
+
 @media screen and (min-width: 500px) and (min-height: 600px) {
   .restaurant-list img.restaurant-list-item-image {
-    max-height: 140px;
+    max-height: 140px; /* adjust image height to viewport height to ensure an intuitive item
+      listing experience  */
   }
 }
 
 @media screen and (min-width: 500px) and (min-height: 800px) {
   .restaurant-list img.restaurant-list-item-image {
-    max-height: 180px;
+    max-height: 180px; /* adjust image height to viewport height to ensure an intuitive item
+      listing experience  */
   }
 }
 
 @media screen and (min-width: 500px) and (min-height: 1000px) {
   .restaurant-list img.restaurant-list-item-image {
-    max-height: 240px;
+    max-height: 240px; /* adjust image height to viewport height to ensure an intuitive item
+      listing experience  */
   }
 }
 
 @media screen and (min-width: 500px) and (min-height: 1200px) {
   .restaurant-list img.restaurant-list-item-image {
-    max-height: 320px;
+    max-height: 320px; /* adjust image height to viewport height to ensure an intuitive item
+      listing experience  */
   }
 }
 
