@@ -7,6 +7,8 @@
 
 "use strict";
 
+const APP_PATH = "/RestaurantReviewsApp";
+
 /**
  * Represents a restaurant entry in the app
  */
@@ -23,14 +25,14 @@ class Restaurant {
    * @returns {string} A generated url targeting the image for the restaurant
    */
   get imageUrl() {
-    return `/RestaurantReviewsApp/img/${this.photograph}`;
+    return `${APP_PATH}/img/${this.photograph}`;
   }
 
   /**
    * @returns {string} A generated internal url for the restaurant
    */
   get url() {
-    return `#${this.id}`;
+    return `${APP_PATH}/#${this.id}`;
   }
 }
 
@@ -92,7 +94,7 @@ class RestaurantsModel {
    */
   async update() {
     // fetch restaurant data async and await results before setting model variables
-    this.restaurants = await this._fetchRestaurants("/RestaurantReviewsApp/data/restaurants.json");
+    this.restaurants = await this._fetchRestaurants(`${APP_PATH}/data/restaurants.json`);
     // set filter selection options based on fetched restaurants
     this.cuisines = new Set(this.restaurants.map(restaurant => restaurant.cuisine_type));
     this.neighborhoods = new Set(this.restaurants.map(restaurant => restaurant.neighborhood));
@@ -237,7 +239,8 @@ class RestaurantsController {
 
     // check if the url is a valid app url
     const newUrl = new URL(url);
-    if(document.location.hostname != newUrl.hostname) throw new Error("the url is not a valid app URL");
+    if(document.location.hostname != newUrl.hostname || 
+       document.location.pathname != newUrl.pathname) throw new Error("the url is not a valid app URL");
 
     // analyze the url in the context of the app
     const urlDetails = this._getUrlDetails(url);
@@ -1103,7 +1106,7 @@ class MapView {
 // register service worker
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function() {
-    navigator.serviceWorker.register("/RestaurantReviewsApp/sw.js").then(
+    navigator.serviceWorker.register(`${APP_PATH}/sw.js`).then(
       function(registration) {
         // Registration was successful
         console.log("ServiceWorker registration successful with scope: ", registration.scope);
