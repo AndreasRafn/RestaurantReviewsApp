@@ -236,9 +236,8 @@ class RestaurantsController {
     if(!url) throw new Error("the url is empty");
 
     // check if the url is a valid app url
-    const appUrl = new URL("/RestaurantReviewApp/");
     const newUrl = new URL(url);
-    if(appUrl.hostname != newUrl.hostname) throw new Error("the url is not a valid app URL");
+    if(document.location.hostname != newUrl.hostname) throw new Error("the url is not a valid app URL");
 
     // analyze the url in the context of the app
     const urlDetails = this._getUrlDetails(url);
