@@ -7,7 +7,7 @@
 
 "use strict";
 
-const APP_PATH = "/RestaurantReviewsApp";
+const APP_PATH = "";
 
 /**
  * Represents a restaurant entry in the app
