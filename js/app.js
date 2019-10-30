@@ -23,7 +23,7 @@ class Restaurant {
    * @returns {string} A generated url targeting the image for the restaurant
    */
   get imageUrl() {
-    return `/img/${this.photograph}`;
+    return `/RestaurantReviewsApp/img/${this.photograph}`;
   }
 
   /**
@@ -92,7 +92,7 @@ class RestaurantsModel {
    */
   async update() {
     // fetch restaurant data async and await results before setting model variables
-    this.restaurants = await this._fetchRestaurants("/data/restaurants.json");
+    this.restaurants = await this._fetchRestaurants("/RestaurantReviewsApp/data/restaurants.json");
     // set filter selection options based on fetched restaurants
     this.cuisines = new Set(this.restaurants.map(restaurant => restaurant.cuisine_type));
     this.neighborhoods = new Set(this.restaurants.map(restaurant => restaurant.neighborhood));
