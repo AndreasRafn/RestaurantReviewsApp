@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 
-<head>  
+<head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Restaurant Reviews</title>
@@ -17,10 +17,11 @@
 <body>
   <header>
     <h1 id="header-title" class="text-all-caps text-spaced-wide">Restaurant Reviews</h1>
-  </header>    
+  </header>
   <main>
     <section class="restaurant-info-panel">
-      <!-- use simple and multi device compatible back design rather than breadcrumb, navigation only enabled when in item details view -->
+      <!-- use simple and multi device compatible back design rather than breadcrumb, navigation 
+        only enabled when in item details view -->
       <nav>
         <!-- directory based url for GitHub Pages -->
         <a class="navigation/back/button panel-button" href="/RestaurantReviewsApp/#">
@@ -29,7 +30,8 @@
       </nav>
       <section class="filter-panel">
         <!-- use switch role ensure sreenreader users understand that filter options can be reached on expansion -->
-        <button class="filter-panel-expander-button panel-button" role="switch" aria-expanded="false" aria-label="filter panel, click to expand">
+        <button class="filter-panel-expander-button panel-button" role="switch" aria-expanded="false"
+          aria-label="filter panel, click to expand">
           <i class="fas fa-chevron-circle-up text-pad-right filter-panel-expander-icon"></i>Filter
         </button>
         <div class="filter-panel-expander-content hidden">
@@ -46,12 +48,17 @@
       <section class="restaurant-list-panel">
       </section>
     </section>
-    <!--hide map from screenreaders to to avoid duplication of restaurant information-->
-    <section class="map-container" aria-hidden="true">
-      <div id="map"></div>
+    <!-- make sure map is accessible for screenreaders -->
+    <section class="map-container">
+      <p id="map-description" class="screenreader">
+        tab to go through the visible map markers corresponding to restaurants in the filtered
+        list
+      </p>
+      <div id="map" role="application" aria-roledescription="interactive map by MapBox"
+        aria-describedby="map-description"></div>
     </section>
   </main>
-    
+
   <footer>
     Copyright (c) 2017 <a href="/" class="dark-text-link"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
   </footer>
@@ -59,7 +66,7 @@
   <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
     integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
     crossorigin=""></script>
-  <script type="application/javascript" charset="utf-8" src="js/app.js"></script>  
+  <script type="application/javascript" charset="utf-8" src="js/app.js"></script>
 </body>
 
 </html>
