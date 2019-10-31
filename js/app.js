@@ -1068,7 +1068,8 @@ class MapView {
       alt: `Map marker for the restaurant: ${restaurant.name} 
         with coordinates: latitude: ${restaurant.latlng.lat},
         longitude: ${restaurant.latlng.lng}`,
-      url: restaurant.url
+      url: restaurant.url,
+      keyboard: true
     });
     marker.addTo(this.map);
   
