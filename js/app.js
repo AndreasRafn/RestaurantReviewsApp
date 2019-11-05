@@ -986,36 +986,31 @@ class RestaurantsFilterPanelView {
  */
 class MapView {
   constructor() {
+    mapboxgl.accessToken = "pk.eyJ1IjoiYW5kcmVhc3JhZm4iLCJhIjoiY2syM2pzaDh3MG5leDNibXpoZ29taHJwdyJ9.C4ToektHZj4A-0SSJTTVcQ";
     /**
      * The MapBox Map object.
      * 
      * 
-     * @type {L.Map}
+     * @type {mapboxgl.Map}
      */
-    this.map = L.map("map", {
-      center: [40.722216, -73.987501],
-      zoom: 12,
-      scrollWheelZoom: true,
-      keyboard: false
+    this.map = new mapboxgl.Map({
+      container: "map", // container id
+      style: "mapbox://styles/mapbox/streets-v11", // stylesheet location
+      center: [40.722216, -73.987501], // starting position [lng, lat]
+      zoom: 12 // starting zoom
     });
-    // add tile layer to map
-    L.tileLayer(
-      "https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}",
-      {
-        mapboxToken:
-          "pk.eyJ1IjoiYW5kcmVhc3JhZm4iLCJhIjoiY2syM2pzaDh3MG5leDNibXpoZ29taHJwdyJ9.C4ToektHZj4A-0SSJTTVcQ",
-        maxZoom: 18,
-        attribution:
-          `Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors,
-          <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>,
-          Imagery © <a href="https://www.mapbox.com/">Mapbox</a>`,
-        id: "mapbox.streets"
-      }
-    ).addTo(this.map);
+
+/*     const markerElement = document.createElement("image");
+    markerElement.src = "img/marker.svg";
+    markerElement.className = "marker";
+    this.map.addImage("marker", markerElement); */
+
+
+
     /**
      * A list of markers currently added to the map.
      * 
-     * @type {L.Marker[]}
+     * @type {mapboxgl.Marker[]}
      */
     this.markers = [];
     /**
@@ -1046,12 +1041,12 @@ class MapView {
   _center() {
     // zoom in further on single marker in restaurant details view
     if (controller.selectedRestaurant) {
-      this.map.setView(controller.selectedRestaurant.latlng, 16);
+      this.map.flyTo({center: controller.selectedRestaurant.latlng, zoom: 16});
       return;
     }
     // zoom in less on center of 1-n markers in overview view
     if (controller.filteredRestaurants) {
-      this.map.setView(controller.centerCoordinatesOfFiltered, 12);
+      this.map.flyTo({ center:controller.centerCoordinatesOfFiltered, zoom: 12});
     }
   }
 
@@ -1063,7 +1058,21 @@ class MapView {
    */
   _addMarker(restaurant) {
     // create marker    
-    const marker = new L.marker([restaurant.latlng.lat, restaurant.latlng.lng], {
+    const markerElement = document.createElement("div");
+    markerElement.className = "map-marker";
+    markerElement.id = `map-marker-${restaurant.id}`;
+    
+    markerElement.addEventListener("click", () => window.location.href = restaurant.url);
+
+    const marker = new mapboxgl.Marker({
+      element: markerElement,
+      anchor: "bottom"
+    }).setLngLat(restaurant.latlng)
+      .addTo(this.map);
+
+
+
+    /* const marker = new L.marker([restaurant.latlng.lat, restaurant.latlng.lng], {
       title: restaurant.name,
       alt: `Map marker for the restaurant: ${restaurant.name} 
         with coordinates: latitude: ${restaurant.latlng.lat},
@@ -1074,7 +1083,7 @@ class MapView {
     marker.addTo(this.map);
   
     // add event handler to make to marker a link to view details for its restaurant
-    marker.on("click", () => (window.location.href = marker.options.url));
+    marker.on("click", () => (window.location.href = marker.options.url)); */
     
     // add marker to collection
     this.markers.push(marker);

@@ -428,6 +428,14 @@ ul.restaurant-list-item-review-list {
   width: 100%;
 }
 
+.map-marker {
+  cursor: pointer;
+  width: 48px;
+  height: 48px;
+  background-size: 48px 48px;
+  background-image: url("../img/marker.svg");
+}
+
 /* #endregion */
 
 /* #endregion main */
