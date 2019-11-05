@@ -988,8 +988,7 @@ class MapView {
     mapboxgl.accessToken = "pk.eyJ1IjoiYW5kcmVhc3JhZm4iLCJhIjoiY2syM2pzaDh3MG5leDNibXpoZ29taHJwdyJ9.C4ToektHZj4A-0SSJTTVcQ";
     /**
      * The MapBox Map object.
-     * 
-     * 
+     *
      * @type {mapboxgl.Map}
      */
     this.map = new mapboxgl.Map({
