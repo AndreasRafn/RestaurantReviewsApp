@@ -168,15 +168,11 @@ select:focus {
   float: right;
 }
 
-.tooltip {
-
-}
-
 .tooltip-text {
   visibility: hidden;
   z-index: 1;
-  background-color: white;
-  color: black;
+  background-color: #252831;
+  color: white;
   text-align: center;
   padding: 5px;
   border-radius: 3px;

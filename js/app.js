@@ -994,10 +994,54 @@ class MapView {
      */
     this.map = new mapboxgl.Map({
       container: "map", // container id
-      style: "mapbox://styles/mapbox/streets-v10", // stylesheet location
+      style: "mapbox://styles/mapbox/light-v10", // stylesheet location
       center: [-73.987501, 40.722216], // starting position [lng, lat]
-      zoom: 12 // starting zoom
+      zoom: 12, // starting zoom
+      antialias: true
     });
+
+    // The 'building' layer in the mapbox-streets vector source contains building-height
+    // data from OpenStreetMap.
+    const map = this.map;
+    this.map.on("load", function () {
+      // Insert the layer beneath any symbol layer.
+      var layers = map.getStyle().layers;
+
+      var labelLayerId;
+      for (var i = 0; i < layers.length; i++) {
+        if (layers[i].type === "symbol" && layers[i].layout["text-field"]) {
+          labelLayerId = layers[i].id;
+          break;
+        }
+      }
+
+      map.addLayer({
+        "id": "3d-buildings",
+        "source": "composite",
+        "source-layer": "building",
+        "filter": ["==", "extrude", "true"],
+        "type": "fill-extrusion",
+        "minzoom": 15,
+        "paint": {
+          "fill-extrusion-color": "#aaa",
+
+          // use an "interpolate" expression to add a smooth transition effect to the
+          // buildings as the user zooms in
+          "fill-extrusion-height": [
+            "interpolate", ["linear"], ["zoom"],
+            15, 0,
+            15.05, ["get", "height"]
+          ],
+          "fill-extrusion-base": [
+            "interpolate", ["linear"], ["zoom"],
+            15, 0,
+            15.05, ["get", "min_height"]
+          ],
+          "fill-extrusion-opacity": .6
+        }
+      }, labelLayerId);
+    });
+
     /**
      * A list of markers currently added to the map.
      * 
@@ -1032,12 +1076,12 @@ class MapView {
   _center() {
     // zoom in further on single marker in restaurant details view
     if (controller.selectedRestaurant) {
-      this.map.flyTo({center: controller.selectedRestaurant.latlng, zoom: 16});
+      this.map.flyTo({ center: controller.selectedRestaurant.latlng, zoom: 16, pitch: 45});
       return;
     }
     // zoom in less on center of 1-n markers in overview view
     if (controller.filteredRestaurants) {
-      this.map.flyTo({ center:controller.centerCoordinatesOfFiltered, zoom: 12});
+      this.map.flyTo({ center: controller.centerCoordinatesOfFiltered, zoom: 12, pitch: 0});
     }
   }
 
