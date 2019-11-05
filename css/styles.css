@@ -168,6 +168,30 @@ select:focus {
   float: right;
 }
 
+.tooltip {
+
+}
+
+.tooltip-text {
+  visibility: hidden;
+  z-index: 1;
+  background-color: white;
+  color: black;
+  text-align: center;
+  padding: 5px;
+  border-radius: 3px;
+  overflow: visible;
+  min-width: 128px;
+  width: 128px;
+  position: absolute;
+  top: 52px;
+  left: -40px;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+}
+
 /* #endregion general styles*/
 
 /* #region header*/

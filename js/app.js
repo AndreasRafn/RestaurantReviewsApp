@@ -982,7 +982,6 @@ class RestaurantsFilterPanelView {
 
 /**
  * The view representing the map in the app.
- * The map API is MapBox.js, now deprecated. Current MapBox alternative is MapBox GL
  */
 class MapView {
   constructor() {
@@ -995,18 +994,10 @@ class MapView {
      */
     this.map = new mapboxgl.Map({
       container: "map", // container id
-      style: "mapbox://styles/mapbox/streets-v11", // stylesheet location
-      center: [40.722216, -73.987501], // starting position [lng, lat]
+      style: "mapbox://styles/mapbox/streets-v10", // stylesheet location
+      center: [-73.987501, 40.722216], // starting position [lng, lat]
       zoom: 12 // starting zoom
     });
-
-/*     const markerElement = document.createElement("image");
-    markerElement.src = "img/marker.svg";
-    markerElement.className = "marker";
-    this.map.addImage("marker", markerElement); */
-
-
-
     /**
      * A list of markers currently added to the map.
      * 
@@ -1059,8 +1050,12 @@ class MapView {
   _addMarker(restaurant) {
     // create marker    
     const markerElement = document.createElement("div");
-    markerElement.className = "map-marker";
+    markerElement.className = "map-marker tooltip";
     markerElement.id = `map-marker-${restaurant.id}`;
+    markerElement.alt = `Map marker for the restaurant: ${restaurant.name} 
+        with coordinates: latitude: ${restaurant.latlng.lat},
+        longitude: ${restaurant.latlng.lng}`;
+    markerElement.innerHTML = `<span class="tooltip-text">${restaurant.name}</span>`;  
     
     markerElement.addEventListener("click", () => window.location.href = restaurant.url);
 
@@ -1069,21 +1064,6 @@ class MapView {
       anchor: "bottom"
     }).setLngLat(restaurant.latlng)
       .addTo(this.map);
-
-
-
-    /* const marker = new L.marker([restaurant.latlng.lat, restaurant.latlng.lng], {
-      title: restaurant.name,
-      alt: `Map marker for the restaurant: ${restaurant.name} 
-        with coordinates: latitude: ${restaurant.latlng.lat},
-        longitude: ${restaurant.latlng.lng}`,
-      url: restaurant.url,
-      keyboard: true
-    });
-    marker.addTo(this.map);
-  
-    // add event handler to make to marker a link to view details for its restaurant
-    marker.on("click", () => (window.location.href = marker.options.url)); */
     
     // add marker to collection
     this.markers.push(marker);
