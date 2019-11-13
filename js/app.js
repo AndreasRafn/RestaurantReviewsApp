@@ -1130,10 +1130,27 @@ class MapView {
     if (controller.filteredRestaurants) {
       // resize first to handle css resize
       this.map.resize();      
-      // show all markers centered with padding 10% of smallest dimension on map top offset by marker height
-      const padding = Math.min(this.mapElement.offsetWidth, this.mapElement.offsetHeight) * 0.1;
-      const paddingOptions = {top: padding + 48, bottom: padding, left: padding, right: padding};
-      this.map.fitBounds(controller.boundsOfFiltered, { pitch: 0, padding: paddingOptions, duration: 200, animate: true});
+      
+      // use bounds calculation approach when more than one match
+      if(controller.filteredRestaurants.length > 1) {
+        // show all markers centered with padding 10% of smallest dimension on map top offset by marker height
+        const padding = Math.min(this.mapElement.offsetWidth, this.mapElement.offsetHeight) * 0.1;
+        const paddingOptions = { top: padding + 48, bottom: padding, left: padding, right: padding };
+        this.map.fitBounds(controller.boundsOfFiltered,
+          {
+            pitch: 0,
+            padding:
+            paddingOptions,
+            duration: 200,
+            animate: true,
+            maxZoom: 14
+          });
+      }
+      else {
+        // if only a single match, center on this with a fixed zoom level
+        this.map.easeTo({ center: controller.filteredRestaurants[0].latlng, zoom: 14, pitch: 0, speed: 2 });
+      }
+      
     }
   }
 
