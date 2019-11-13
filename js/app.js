@@ -117,6 +117,38 @@ class RestaurantsModel {
   }
 
   /**
+   * Returns the bounds of all filtered restaurants.
+   * The bounds can be used to fit a collection of markers in the visible area of the map.
+   *
+   * @returns {mapbox.LngLatBounds} the bounds of all filtered restaurants
+   */
+  get boundsOfFiltered() {
+    // return fallback based on default center coordinates
+    if (!this.filteredRestaurants || this.filteredRestaurants.length === 0) {
+      const lngLatArray = [this._defaultCenterCoordinates.lng, this._defaultCenterCoordinates.lat];
+      return [lngLatArray, lngLatArray];
+    }
+    // if there are matches, calculate bounds
+    const minLat =
+      this.filteredRestaurants
+        .map(restaurant => parseFloat(restaurant.latlng.lat))
+        .reduce((a, b) => Math.min(a,b));
+    const maxLat =
+      this.filteredRestaurants
+        .map(restaurant => parseFloat(restaurant.latlng.lat))
+        .reduce((a, b) => Math.max(a, b));
+    const minLng =
+      this.filteredRestaurants
+        .map(restaurant => parseFloat(restaurant.latlng.lng))
+        .reduce((a, b) => Math.min(a, b));
+    const maxLng =
+      this.filteredRestaurants
+        .map(restaurant => parseFloat(restaurant.latlng.lng))
+        .reduce((a, b) => Math.max(a, b));
+    return [[minLng, minLat],[maxLng, maxLat]];
+  }
+
+  /**
    * Returns the coordinates of the center of all filtered restaurants.
    * The center coordinates can be used to e.g. center a map.
    *
@@ -126,9 +158,9 @@ class RestaurantsModel {
     // return Udacity exercise provided static coordinate points if there are no matches.
     // In a real life scenario a different fallback should be applied.
     if (!this.filteredRestaurants || this.filteredRestaurants.length === 0) {
-      return { lat: 40.722216, lng: -73.987501 };
+      return this._defaultCenterCoordinates;
     }
-    //  if there are matches, calcualte the center coordinates
+    //  if there are matches, calculate the center coordinates
     const avgLat =
       this.filteredRestaurants
         .map(restaurant => parseFloat(restaurant.latlng.lat))
@@ -321,6 +353,13 @@ class RestaurantsController {
    */
   get centerCoordinatesOfFiltered() {
     return model.centerCoordinatesOfFiltered;
+  }
+
+  /**
+   * @returns {mapbox.LngLatBounds} the bounds of all filtered restaurants.
+   */
+  get boundsOfFiltered() {
+    return model.boundsOfFiltered;
   }
 }
 
@@ -985,6 +1024,13 @@ class RestaurantsFilterPanelView {
  */
 class MapView {
   constructor() {
+    /**
+     * The default centering coordinates for fallback when no data can provide a center
+     * 
+     * @type {{lat: number, lng: number}}
+     */
+    this._defaultCenterCoordinates = { lng: -73.987501, lat: 40.722216 };
+    
     mapboxgl.accessToken = "pk.eyJ1IjoiYW5kcmVhc3JhZm4iLCJhIjoiY2syM2pzaDh3MG5leDNibXpoZ29taHJwdyJ9.C4ToektHZj4A-0SSJTTVcQ";
     /**
      * The MapBox Map object.
@@ -994,7 +1040,7 @@ class MapView {
     this.map = new mapboxgl.Map({
       container: "map", // container id
       style: "mapbox://styles/mapbox/light-v10", // stylesheet location
-      center: [-73.987501, 40.722216], // starting position [lng, lat]
+      center: this._defaultCenterCoordinates,
       zoom: 12, // starting zoom
       antialias: true
     });
@@ -1082,9 +1128,12 @@ class MapView {
     }
     // zoom in less on center of 1-n markers in overview view 
     if (controller.filteredRestaurants) {
-      //resize first to handle css resize
-      this.map.resize();
-      this.map.easeTo({ center: controller.centerCoordinatesOfFiltered, zoom: 12, pitch: 0, speed: 2 });
+      // resize first to handle css resize
+      this.map.resize();      
+      // show all markers centered with padding 10% of smallest dimension on map top offset by marker height
+      const padding = Math.min(this.mapElement.offsetWidth, this.mapElement.offsetHeight) * 0.1;
+      const paddingOptions = {top: padding + 48, bottom: padding, left: padding, right: padding};
+      this.map.fitBounds(controller.boundsOfFiltered, { pitch: 0, padding: paddingOptions, duration: 200, animate: true});
     }
   }
 
@@ -1137,7 +1186,7 @@ class MapView {
       }
     }
     this._center();
-  }
+  }  
 }
 
 // register service worker
