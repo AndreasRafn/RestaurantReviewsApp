@@ -304,7 +304,7 @@ class RestaurantsController {
 
     //then render views
     restaurantsView.render();
-    appView.render();
+    appView.render();    
     mapView.render();
   }
 
@@ -1038,7 +1038,7 @@ class MapView {
           ],
           "fill-extrusion-opacity": .6
         }
-      }, labelLayerId);
+      }, labelLayerId);      
     });
 
     /**
@@ -1075,12 +1075,16 @@ class MapView {
   _center() {
     // zoom in further on single marker in restaurant details view
     if (controller.selectedRestaurant) {
-      this.map.flyTo({ center: controller.selectedRestaurant.latlng, zoom: 16, pitch: 45});
+      //resize first to handle css resize
+      this.map.resize();
+      this.map.easeTo({ center: controller.selectedRestaurant.latlng, zoom: 16, pitch: 45, speed: 2});
       return;
     }
-    // zoom in less on center of 1-n markers in overview view
+    // zoom in less on center of 1-n markers in overview view 
     if (controller.filteredRestaurants) {
-      this.map.flyTo({ center: controller.centerCoordinatesOfFiltered, zoom: 12, pitch: 0});
+      //resize first to handle css resize
+      this.map.resize();
+      this.map.easeTo({ center: controller.centerCoordinatesOfFiltered, zoom: 12, pitch: 0, speed: 2 });
     }
   }
 
