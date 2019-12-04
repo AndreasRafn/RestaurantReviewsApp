@@ -1,3 +1,5 @@
+ @use '_color' as color;
+
 body,
 html {
   font-family: "Roboto", Arial, Helvetica, sans-serif;
@@ -69,7 +71,7 @@ select {
 }
 
 select:focus {
-  border: 3px solid #669cff;
+  border: 3px solid color.$focus-main;
 }
 
 .text-all-caps {  
@@ -93,21 +95,21 @@ select:focus {
 }
 
 .dark-text-link {
-  color: #f18200;
+  color: color.$accent-main;
 }
 
 .dark-text-link:hover,
 .dark-text-link:focus {
-  color: #669cff;
+  color: color.$focus-main;
 }
 
 .text-accent {
-  color: #f18200; 
+  color: color.$accent-main; 
 }
 
 .panel-button {
   color: white;
-  background-color: #3A3D45;
+  background-color: color.$primary-dark-3;
   font-size: 1.2em;
   cursor: pointer;
   width: 100%;
@@ -118,8 +120,8 @@ select:focus {
 
 .panel-button:hover,
 .panel-button:focus {
-  color: #669cff;
-  background-color: #4D5057;
+  color: color.$focus-main;
+  background-color: color.$primary-dark-4;
 }
 
 .panel-button:active {
@@ -128,7 +130,7 @@ select:focus {
 
 .panel-button-accent {
   color: white;
-  background-color: #f18200;
+  background-color: color.$accent-main;
   font-size: 1.2em;
   cursor: pointer;
   width: 100%;
@@ -140,7 +142,7 @@ select:focus {
 .panel-button-accent:hover,
 .panel-button-accent:focus, 
 .panel-button-accent:active {  
-  background-color: #669cff;
+  background-color: color.$focus-main;
 }
 
 /* hide content visually but keep available for screen readers */
@@ -164,14 +166,14 @@ select:focus {
 }
 
 .star-rating-span {
-  color: #f18200;
+  color: color.$accent-main;
   float: right;
 }
 
 .tooltip-text {
   visibility: hidden;
   z-index: 1;
-  background-color: #252831;
+  background-color: color.$primary-dark-1;
   color: white;
   text-align: center;
   padding: 5px;
@@ -195,7 +197,7 @@ select:focus {
 header {
   width: 100%;
   color: white;
-  background-color: #252831;
+  background-color: color.$primary-dark-1;
   text-align: center;
   padding: 20px 20px 20px 10px;
 }
@@ -212,8 +214,8 @@ header {
 
 footer {
   width: 100%;
-  color: #a6a7ab;
-  background-color: #4D5057;
+  color: color.$primary-dark-7;
+  background-color: color.$primary-dark-4;
   font-size: 0.8em;
   letter-spacing: 1px;
   padding: 20px;
@@ -235,7 +237,7 @@ main {
 /* #region restaurant-info-panel */
 
 .restaurant-info-panel {
-  background-color: #f3f3f3;
+  background-color: color.$primary-light-2;
   order: 2;
   width: 100%;
   height: 100%;
@@ -281,11 +283,11 @@ nav {
 }
 
 .filter-panel-expander-button[aria-expanded="true"] {
-  background-color: #4D5057;
+  background-color: color.$primary-dark-4;
 }
 
 .filter-panel-expander-content {
-  background-color: #5e6167;
+  background-color: color.$primary-dark-5;
   flex-direction: column;
   width: 100%;
   padding: 10px;
@@ -325,7 +327,7 @@ nav {
   box-sizing: border-box;
   background-color: white;  
   margin-bottom: 10px;
-  border-top: 1px solid #e9e9ea;
+  border-top: 1px solid color.$primary-dark-8;
 }
 
 .details .restaurant-list li.restaurant-list-item h2 {
@@ -338,7 +340,7 @@ img.restaurant-list-item-image {
   width: 100%;
   max-height: 240px;  
   object-fit: cover; /* ensures fitted and centered view retaining aspect ratio */
-  background-color: #f3f3f3; /* slightly different background in case of failed fetch */
+  background-color: color.$primary-light-2; /* slightly different background in case of failed fetch */
 }
 
 section.restaurant-list-item-info-panel {
@@ -349,7 +351,7 @@ section.restaurant-list-item-info-panel {
 }
 
 .details section.restaurant-list-item-info-panel {
-  border-bottom: 1px solid #e9e9ea;
+  border-bottom: 1px solid color.$primary-dark-8;
   padding-bottom: 20px;
 }
 
@@ -367,14 +369,14 @@ section.restaurant-list-item-address-section {
   width: 100%;
   text-align: center;
   color: white;
-  background-color: #f18200;
+  background-color: color.$accent-main;
   padding: 10px 20px 10px;
   box-sizing: border-box;
 }
 
 .restaurant-list-item-operating-hours-table td:first-child {
   font-weight: bold;
-  color: #3a3d45;
+  color: color.$primary-dark-3;
   padding-right: 10px;
 }
 
@@ -407,17 +409,17 @@ ul.restaurant-list-item-review-list {
 }
 
 .restaurant-list-item-review-poster-name {
-  color: #f18200;
+  color: color.$accent-main;
   font-weight: bold;
 }
 
 .restaurant-list-item-review-date {
-  color: #66686e;
+  color: color.$primary-dark-6;
 }
 
 .restaurant-list-item-review-comments {
   padding: 0.6em;  
-  background-color: #f6f6f6;
+  background-color: color.$primary-light-3;
   border-radius: 0.4em;
   font-style: italic;
 }
@@ -427,7 +429,7 @@ ul.restaurant-list-item-review-list {
   text-align: center;
   padding: 1em;
   font-size: 1.2em;
-  color: #66686e;
+  color: color.$primary-dark-6;
   box-sizing: border-box;
 }
 
@@ -479,7 +481,7 @@ ul.restaurant-list-item-review-list {
     width: 33%; /* prefer 33% width up tp 1200px where fixed to 400px */
     min-width: 200px;
     max-width: 400px;
-    background-color: #303440;
+    background-color: color.$primary-dark-2;
   }
 
   .map-container {
@@ -516,11 +518,11 @@ ul.restaurant-list-item-review-list {
   }
 
   .restaurant-list-panel-message {
-    color: #c1c2c5;
+    color: color.$primary-dark-7;
   }
 
   .details .restaurant-list-panel-message {
-    color: #66686e;
+    color: color.$primary-dark-6;
   }
 }
 

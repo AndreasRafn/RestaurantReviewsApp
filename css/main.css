@@ -1,0 +1,587 @@
+body,
+html {
+  font-family: "Roboto", Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* #region general styles */
+header,
+nav,
+footer,
+section,
+article,
+div {
+  box-sizing: border-box;
+  /*preferred to account for borders, padding etc. the affects dimensions, 
+  cf.:https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing */
+}
+
+img,
+embed,
+object,
+video {
+  max-width: 100%;
+  /*avoid overflowing or empty space to ensure responsiveness for visual content elements, 
+  as recommended in lesson 2.7.9*/
+}
+
+p {
+  font-size: 1em;
+  margin-bottom: 0;
+  margin: 0 0 0.4em;
+}
+
+a {
+  text-decoration: none;
+}
+
+h1 {
+  font-size: 1.4em;
+  padding: 0;
+  margin: 0 0 0.6em;
+  font-weight: bold;
+}
+
+h2 {
+  font-size: 1.3em;
+  padding: 0;
+  margin: 0 0 0.6em;
+}
+
+h3 {
+  font-size: 1.2em;
+  padding: 0;
+  margin: 0.6em 0 0.6em;
+}
+
+select {
+  height: 48px;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+select:focus {
+  border: 3px solid #669cff;
+}
+
+.text-all-caps {
+  text-transform: uppercase;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-spaced-wide {
+  letter-spacing: 0.6em;
+}
+
+.text-pad-right {
+  padding-right: 10px;
+}
+
+.text-pad-left {
+  padding-left: 10px;
+}
+
+.dark-text-link {
+  color: #f18200;
+}
+
+.dark-text-link:hover,
+.dark-text-link:focus {
+  color: #669cff;
+}
+
+.text-accent {
+  color: #f18200;
+}
+
+.panel-button {
+  color: white;
+  background-color: #3A3D45;
+  font-size: 1.2em;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  padding: 15px 20px 15px;
+  box-sizing: border-box;
+}
+
+.panel-button:hover,
+.panel-button:focus {
+  color: #669cff;
+  background-color: #4D5057;
+}
+
+.panel-button:active {
+  color: white;
+}
+
+.panel-button-accent {
+  color: white;
+  background-color: #f18200;
+  font-size: 1.2em;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  padding: 15px 20px 15px;
+  box-sizing: border-box;
+}
+
+.panel-button-accent:hover,
+.panel-button-accent:focus,
+.panel-button-accent:active {
+  background-color: #669cff;
+}
+
+/* hide content visually but keep available for screen readers */
+.screenreader {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+}
+
+.hidden {
+  display: none;
+}
+
+.dark-text {
+  color: white;
+}
+
+.input-label {
+  font-size: 1em;
+  font-weight: normal;
+}
+
+.star-rating-span {
+  color: #f18200;
+  float: right;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  z-index: 1;
+  background-color: #252831;
+  color: white;
+  text-align: center;
+  padding: 5px;
+  border-radius: 3px;
+  overflow: visible;
+  min-width: 128px;
+  width: 128px;
+  position: absolute;
+  top: 52px;
+  left: -40px;
+}
+
+.tooltip:hover .tooltip-text {
+  visibility: visible;
+}
+
+/* #endregion general styles*/
+/* #region header*/
+header {
+  width: 100%;
+  color: white;
+  background-color: #252831;
+  text-align: center;
+  padding: 20px 20px 20px 10px;
+}
+
+#header-title {
+  padding-left: 10px;
+  /* ensure centering on mobile */
+  font-weight: normal;
+  margin: 0;
+}
+
+/* #endregion header*/
+/* #region footer*/
+footer {
+  width: 100%;
+  color: #c1c2c5;
+  background-color: #4D5057;
+  font-size: 0.8em;
+  letter-spacing: 1px;
+  padding: 20px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* #endregion footer*/
+/* #region main */
+main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* #region restaurant-info-panel */
+.restaurant-info-panel {
+  background-color: #f3f3f3;
+  order: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* #region nav*/
+nav {
+  display: none;
+  width: 100%;
+  top: 0;
+  left: 0;
+  position: sticky;
+  /* the nav stick to the top when scrolling down making it easy to go back
+  to results (without a device back button) in the case of many reviews and other content */
+  box-sizing: border-box;
+}
+
+.details nav {
+  display: flex;
+}
+
+/* #endregion nav*/
+/* #region filter-panel */
+.filter-panel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.details .filter-panel {
+  display: none;
+  /* hide filter in details view, when there is nothing to filter */
+}
+
+.filter-panel-expander-button {
+  border: none;
+  outline: none;
+  text-align: left;
+}
+
+.filter-panel-expander-button[aria-expanded=true] {
+  background-color: #4D5057;
+}
+
+.filter-panel-expander-content {
+  background-color: #5e6167;
+  flex-direction: column;
+  width: 100%;
+  padding: 10px;
+}
+
+.filter-panel-expander-content.expanded {
+  display: flex;
+}
+
+.filter-panel-expander-content label.input-label {
+  margin: 3px 0 3px;
+}
+
+/* #endregion filter-panel */
+/* #region restaurants-list-panel */
+.restaurant-list-panel {
+  margin: 0;
+}
+
+.restaurant-list {
+  margin: 0;
+  padding: 10px 0 10px;
+  box-sizing: border-box;
+  list-style: outside none none;
+}
+
+.details .restaurant-list {
+  padding-top: 0;
+}
+
+.restaurant-list li.restaurant-list-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: white;
+  margin-bottom: 10px;
+  border-top: 1px solid #e9e9ea;
+}
+
+.details .restaurant-list li.restaurant-list-item h2 {
+  padding-top: 15px;
+  margin-bottom: 15px;
+  font-size: 1.6em;
+}
+
+img.restaurant-list-item-image {
+  width: 100%;
+  max-height: 240px;
+  object-fit: cover;
+  /* ensures fitted and centered view retaining aspect ratio */
+  background-color: #f3f3f3;
+  /* slightly different background in case of failed fetch */
+}
+
+section.restaurant-list-item-info-panel {
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.details section.restaurant-list-item-info-panel {
+  border-bottom: 1px solid #e9e9ea;
+  padding-bottom: 20px;
+}
+
+section.restaurant-list-item-address-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.restaurant-list a.restaurant-list-item-button {
+  text-align: center;
+}
+
+.restaurant-list p.restaurant-list-item-tag {
+  width: 100%;
+  text-align: center;
+  color: white;
+  background-color: #f18200;
+  padding: 10px 20px 10px;
+  box-sizing: border-box;
+}
+
+.restaurant-list-item-operating-hours-table td:first-child {
+  font-weight: bold;
+  color: #3A3D45;
+  padding-right: 10px;
+}
+
+section.restaurant-list-item-reviews-section {
+  width: 100%;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+li.restaurant-list-item-review {
+  width: 100%;
+  padding: 0 0 10px;
+}
+
+ul.restaurant-list-item-review-list {
+  margin: 0;
+  padding: 0 0 10px;
+  box-sizing: border-box;
+  list-style: outside none none;
+}
+
+.restaurant-list-item-review-header {
+  vertical-align: middle;
+}
+
+.restaurant-list-item-review-header .star-rating-span {
+  position: relative;
+  bottom: 0.1em;
+  /* ensure that star icons are perceived as in line with text */
+}
+
+.restaurant-list-item-review-poster-name {
+  color: #f18200;
+  font-weight: bold;
+}
+
+.restaurant-list-item-review-date {
+  color: #66686e;
+}
+
+.restaurant-list-item-review-comments {
+  padding: 0.6em;
+  background-color: #f6f6f6;
+  border-radius: 0.4em;
+  font-style: italic;
+}
+
+.restaurant-list-panel-message {
+  width: 100%;
+  text-align: center;
+  padding: 1em;
+  font-size: 1.2em;
+  color: #66686e;
+  box-sizing: border-box;
+}
+
+/* #endregion restaurants-list-panel */
+/* #endregion restaurant-info-panel */
+/* #region map*/
+.map-container {
+  order: 1;
+  min-height: 240px;
+  width: 100%;
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+}
+
+.map-marker {
+  cursor: pointer;
+  width: 48px;
+  height: 48px;
+  background-size: 48px 48px;
+  background-image: url("../img/marker.svg");
+}
+
+/* #endregion */
+/* #endregion main */
+/* #region media queries*/
+/* for larger screens like tablets and desktops shift layout to side menu and large map */
+@media screen and (min-width: 500px) and (min-height: 500px) {
+  #header-title {
+    text-align: left;
+  }
+
+  main {
+    flex: 1;
+    overflow: hidden;
+    /* make main content unscrollable */
+    flex-direction: row;
+    /* to horizontal layout */
+  }
+
+  .restaurant-info-panel {
+    order: 1;
+    /* place before (left of) map container horizontally */
+    width: 33%;
+    /* prefer 33% width up tp 1200px where fixed to 400px */
+    min-width: 200px;
+    max-width: 400px;
+    background-color: #303440;
+  }
+
+  .map-container {
+    order: 2;
+    /* place after (right of) restaurant list container horizontally */
+    height: 100%;
+    flex: 1;
+    /* fill remaining space to provide a app-like tablet or desktop experience */
+  }
+
+  .details .restaurant-info-panel {
+    width: 50%;
+    /* in details view, prefer 50% width up to 1200px where fixed to 600px */
+    min-width: 300px;
+    max-width: 800px;
+  }
+
+  .restaurant-list-panel {
+    overflow: auto;
+    /* ensures list is scrollable */
+  }
+
+  .restaurant-list {
+    padding: 10px;
+    /* add padding to sides in desktop view */
+    background-color: inherit;
+  }
+
+  .details .restaurant-list {
+    padding-top: 10px;
+  }
+
+  .restaurant-list li.restaurant-list-item {
+    border: none;
+  }
+
+  .details .restaurant-list li.restaurant-list-item h2 {
+    font-size: 1.4em;
+  }
+
+  .restaurant-list-panel-message {
+    color: #c1c2c5;
+  }
+
+  .details .restaurant-list-panel-message {
+    color: #66686e;
+  }
+}
+@media screen and (min-width: 1200px) {
+  body {
+    font-size: 1.1em;
+    /* slight relative font-size increase across all elements */
+  }
+
+  .filter-panel select {
+    height: 36px;
+    /* better for desktop */
+  }
+
+  .details .restaurant-list li.restaurant-list-item h2 {
+    font-size: 1.6em;
+  }
+}
+@media screen and (min-width: 1600px) {
+  body {
+    font-size: 1.2em;
+    /* slight relative font-size increase across all elements */
+  }
+}
+@media screen and (min-height: 600px) {
+  .map-container {
+    min-height: 280px;
+    /* adjust map height for large height narrow viewport (non-tablet) mobile devices */
+  }
+}
+@media screen and (min-height: 600px) {
+  .map-container {
+    min-height: 300px;
+    /* adjust map height for large height narrow viewport (non-tablet) mobile devices */
+  }
+}
+@media screen and (min-width: 500px) and (min-height: 600px) {
+  .restaurant-list img.restaurant-list-item-image {
+    max-height: 140px;
+    /* adjust image height to viewport height to ensure an intuitive item
+    listing experience  */
+  }
+}
+@media screen and (min-width: 500px) and (min-height: 800px) {
+  .restaurant-list img.restaurant-list-item-image {
+    max-height: 180px;
+    /* adjust image height to viewport height to ensure an intuitive item
+    listing experience  */
+  }
+}
+@media screen and (min-width: 500px) and (min-height: 1000px) {
+  .restaurant-list img.restaurant-list-item-image {
+    max-height: 240px;
+    /* adjust image height to viewport height to ensure an intuitive item
+    listing experience  */
+  }
+}
+@media screen and (min-width: 500px) and (min-height: 1200px) {
+  .restaurant-list img.restaurant-list-item-image {
+    max-height: 320px;
+    /* adjust image height to viewport height to ensure an intuitive item
+    listing experience  */
+  }
+}
+/* #endregion media queries */
+
+/*# sourceMappingURL=main.css.map */
